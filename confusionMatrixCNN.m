@@ -6,29 +6,26 @@
 %
 %   This was made specifically for the Ashraf data set collected in 2017.
 
-function [ u_cmat, std_cmat ] = confusionMatrixCNN( PARSEFUNCTION, FILENAME )
+function afConfusionMatrix = confusionMatrixCNN( szPARSEFUNCTION, szFILENAME )
 if nargin == 0
-    FILENAME = 'test_results.mat';
-    PARSEFUNCTION = 'formatAshraf';
+    szFILENAME = 'test_results.mat';
+    szPARSEFUNCTION = 'formatAshraf';
 end
-results = feval( PARSEFUNCTION, FILENAME );
-[~, N] = size( results.gt );
-labels = unique( results.gt );
-numLabels = length( labels );
-cmat = zeros(numLabels, numLabels, N );
+objResults = feval( szPARSEFUNCTION, szFILENAME );
+[~, iNumFolds] = size( objResults.gt );
+acatLabelNames = unique( objResults.gt );
+iNumLabels = length( acatLabelNames );
+afConfusionMatrix = zeros(iNumLabels, iNumLabels, iNumFolds );
 
-for fold = 1:N
-    for gti = 1:numLabels
-        for predi = 1:numLabels
-            cmat( gti, predi, fold ) = ...
-                sum( results.gt(:,fold) == labels( gti ) & ...
-                results.prediction(:,fold) == labels( predi ) );
+for iFold = 1:iNumFolds
+    for iGT = 1:iNumLabels
+        for predi = 1:iNumLabels
+            afConfusionMatrix( iGT, predi, iFold ) = ...
+                sum( objResults.gt(:,iFold) == acatLabelNames( iGT ) & ...
+                objResults.prediction(:,iFold) == acatLabelNames( predi ) );
         end
         % At the end of the row you have to normalize the row
-        sum_ = sum( cmat( gti, :, fold ) );
-        cmat( gti, :, fold ) = cmat( gti, :, fold ) ./ sum_;
+        iSum = sum( afConfusionMatrix( iGT, :, iFold ) );
+        afConfusionMatrix( iGT, :, iFold ) = afConfusionMatrix( iGT, :, iFold ) ./ iSum;
     end
 end
-
-u_cmat = mean( cmat, 3 );
-std_cmat = var( cmat, 0, 3 );
