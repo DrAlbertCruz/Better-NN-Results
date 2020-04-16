@@ -17,7 +17,7 @@ objResults = feval( szPARSEFUNCTION, szFILENAME );
 [~, iNumFolds] = size( objResults.gt );
 acatLabelNames = unique( objResults.gt );
 iNumClasses = length( acatLabelNames );
-afMetrics = zeros(iNumClasses,11,iNumFolds);
+afMetrics = zeros(iNumClasses,9,iNumFolds);
 
 for iFold = 1:iNumFolds
     for iGT = 1:iNumClasses
@@ -44,18 +44,18 @@ for iFold = 1:iNumFolds
         afMetrics(iGT,5,iFold) = 1 - afMetrics(iGT,1,iFold);
         % False positive rate
         afMetrics(iGT,6,iFold) = 1 - afMetrics(iGT,2,iFold);
-        % False discovery rate
-        afMetrics(iGT,7,iFold) = 1 - afMetrics(iGT,3,iFold);
-        % False omission rate
-        afMetrics(iGT,8,iFold) = 1 - afMetrics(iGT,4,iFold);
+%         % False discovery rate
+%         afMetrics(iGT,7,iFold) = 1 - afMetrics(iGT,3,iFold);
+%         % False omission rate
+%         afMetrics(iGT,8,iFold) = 1 - afMetrics(iGT,4,iFold);
         % Accuracy
-        afMetrics(iGT,9,iFold) = (iTruePositives + iTrueNegatives) / ...
+        afMetrics(iGT,7,iFold) = (iTruePositives + iTrueNegatives) / ...
             (iPositives + iNegatives);
         % F1 score
-        afMetrics(iGT,10,iFold) = 2 * afMetrics(iGT,3,iFold) * afMetrics(iGT,1,iFold) / ...
+        afMetrics(iGT,8,iFold) = 2 * afMetrics(iGT,3,iFold) * afMetrics(iGT,1,iFold) / ...
              ( afMetrics(iGT,3,iFold) + afMetrics(iGT,1,iFold) );
          % Matthews correlation coefficient
-        afMetrics(iGT,11,iFold) = (iTruePositives * iTrueNegatives - ...
+        afMetrics(iGT,9,iFold) = (iTruePositives * iTrueNegatives - ...
             iFalsePositives * iFalseNegatives ) / sqrt( (iTruePositives + ...
             iFalsePositives) * (iTruePositives + iFalseNegatives) * ...
             (iTrueNegatives + iFalsePositives) * (iTrueNegatives + ...
